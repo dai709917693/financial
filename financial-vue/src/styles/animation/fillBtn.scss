@@ -1,0 +1,24 @@
+@mixin fill-btn($color: #409eff) {
+  overflow: hidden;
+  transition: color 0.5s;
+  position: relative;
+  &:hover {
+    color: #fff;
+  }
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    background: $color;
+    height: 150%;
+    width: 150%;
+    border-radius: 50%;
+    top: 100%;
+    left: 100%;
+    transition: all 0.7s;
+  }
+  &:hover:before {
+    top: -20%;
+    left: -20%;
+  }
+}
