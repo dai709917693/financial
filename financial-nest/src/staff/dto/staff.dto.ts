@@ -19,7 +19,7 @@ export class QueryStaffDto {
   readonly name?: string;
 
   @IsNumberString()
-  page: number;
+  pageNum: number;
 
   @IsNumberString()
   pageSize: number;

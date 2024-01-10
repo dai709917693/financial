@@ -5,10 +5,15 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Put,
 } from '@nestjs/common';
 import { ProjectService } from '../service/project.service';
-import { CreateProjectDto, UpdateProjectDto } from '../dto/project.dto';
+import {
+  CreateProjectDto,
+  QueryProjectDto,
+  UpdateProjectDto,
+} from '../dto/project.dto';
 
 @Controller({
   path: 'project',
@@ -28,6 +33,11 @@ export class ProjectController {
   }
 
   @Get()
+  getList(@Query() query: QueryProjectDto) {
+    return this.service.getList(query);
+  }
+
+  @Get('/all')
   findAll() {
     return this.service.findAll();
   }

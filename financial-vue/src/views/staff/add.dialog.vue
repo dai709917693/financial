@@ -1,6 +1,11 @@
 <script setup lang="ts">
+import { apiStaff, apiProject } from '@/api'
 import { DialogOpenType } from '@/constants'
-import type { Project } from '#types'
+import type { Project, StaffProject } from '#types'
+import { ElMessage } from 'element-plus'
+
+const emit = defineEmits<{ (e: 'refresh'): void }>()
+
 const dialogVisible = ref(false)
 const openType = ref(DialogOpenType.ADD)
 const moduleName = '员工'
@@ -14,20 +19,19 @@ const title = computed(() => {
       return `${moduleName}详情`
   }
 })
+const typeLabel = computed(() => {
+  switch (openType.value) {
+    case DialogOpenType.ADD:
+      return '新增'
+    case DialogOpenType.EDIT:
+      return '编辑'
+  }
+})
 
 const formRef = ref()
 
 const selectedProject = ref()
-const projectList = ref<Project[]>([
-  {
-    id: '12',
-    name: '项目项目1项目1项目1项目1项目1项目1项目1项目1项目11'
-  },
-  {
-    id: '22',
-    name: '项目2'
-  }
-])
+const projectList = ref<Project[]>([])
 
 interface UnitSalary {
   overtimeUnitPrice: number
@@ -61,7 +65,7 @@ function handleSelectionChange(value: Project[]) {
   selectedProject.value = res
 }
 
-function open(type = DialogOpenType.ADD, data?: any) {
+async function open(type = DialogOpenType.ADD, data?: any) {
   if (data) {
     form.value = data
   } else {
@@ -69,6 +73,8 @@ function open(type = DialogOpenType.ADD, data?: any) {
   }
   openType.value = type
   dialogVisible.value = true
+  const res = await apiProject.allList()
+  projectList.value = res.data ?? []
 }
 
 function reset() {
@@ -86,8 +92,16 @@ function close() {
 
 async function confirm() {
   const res = await formRef.value.validate()
+  const req = openType.value === DialogOpenType.EDIT ? apiStaff.update : apiStaff.create
   if (res) {
-    close()
+    const res = await req(form.value)
+    if (res.state) {
+      ElMessage.success(typeLabel.value + '成功')
+      emit('refresh')
+      close()
+    } else {
+      ElMessage.error(res.message)
+    }
   }
 }
 
@@ -101,6 +115,7 @@ defineExpose({
     v-model="dialogVisible"
     :title="title"
     draggable
+    top="100px"
     width="1000"
     :close-on-click-modal="false"
   >
@@ -114,7 +129,7 @@ defineExpose({
         </el-select>
       </el-form-item>
       <el-form-item label="项目">
-        <el-table border :data="projectList" @selection-change="handleSelectionChange">
+        <el-table border :data="projectList" @selection-change="handleSelectionChange" style="height: 400px;">
           <el-table-column type="selection"></el-table-column>
           <el-table-column prop="name" label="项目名称"></el-table-column>
           <el-table-column label="出勤单价（元/天）">

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { StaffEntity } from '../entity/staff.entity';
 import {
   CreateStaffDto,
@@ -60,14 +60,15 @@ export class StaffService {
     return;
   }
 
-  findAll(query: QueryStaffDto) {
-    return this.repo.find({
+  async findAll(query: QueryStaffDto) {
+    const [list, total] = await this.repo.findAndCount({
       relations: ['staffProjects'],
       where: {
-        name: query.name,
+        name: Like(`%${query.name}%`),
       },
-      skip: query.page,
+      skip: (query.pageNum - 1) * query.pageSize,
       take: query.pageSize,
     });
+    return { list, total };
   }
 }

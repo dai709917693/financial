@@ -1,9 +1,11 @@
+import router from '@/router'
 import axios from 'axios'
 
-let token = ''
+let token = sessionStorage.getItem('token')
 
 export function updateToken(val: string) {
   token = val
+  sessionStorage.setItem('token', val)
 }
 
 export const instance = axios.create({
@@ -22,9 +24,16 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   function (response) {
-    return response.data
+    return { ...response.data, state: true } as any
   },
   function (error) {
-    return Promise.reject(error)
+    if (error.response.status === 401) {
+      router.push({ name: 'login' })
+    }
+    console.log(error)
+    return Promise.resolve({
+      state: false,
+      message: error.response.data.message
+    })
   }
 )

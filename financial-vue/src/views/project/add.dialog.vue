@@ -1,8 +1,22 @@
 <script setup lang="ts">
+import { apiProject } from '@/api'
 import { DialogOpenType } from '@/constants'
+import { ElMessage } from 'element-plus'
+
+const emit = defineEmits<{ (e: 'refresh'): void }>()
+
 const dialogVisible = ref(false)
 const openType = ref(DialogOpenType.ADD)
+
 const moduleName = '项目'
+const typeLabel = computed(() => {
+  switch (openType.value) {
+    case DialogOpenType.ADD:
+      return '新增'
+    case DialogOpenType.EDIT:
+      return '编辑'
+  }
+})
 const title = computed(() => {
   switch (openType.value) {
     case DialogOpenType.ADD:
@@ -51,8 +65,16 @@ function close() {
 
 async function confirm() {
   const res = await formRef.value.validate()
+  const req = openType.value === DialogOpenType.EDIT ? apiProject.update : apiProject.create
   if (res) {
-    close()
+    const res = await req(form.value)
+    if (res.state) {
+      ElMessage.success(typeLabel.value + '成功')
+      emit('refresh')
+      close()
+    } else {
+      ElMessage.error(res.message)
+    }
   }
 }
 

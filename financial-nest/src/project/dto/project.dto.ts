@@ -1,5 +1,23 @@
-import { IsOptional, IsString, MaxLength, IsArray } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  MaxLength,
+  IsArray,
+  IsNumberString,
+} from 'class-validator';
 import { StaffProjectConfig } from 'src/staff/dto/staff.dto';
+
+export class QueryProjectDto {
+  @IsString()
+  @IsOptional()
+  readonly name: string;
+
+  @IsNumberString()
+  pageNum: number;
+
+  @IsNumberString()
+  pageSize: number;
+}
 
 export class CreateProjectDto {
   @IsString()

@@ -1,8 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { ProjectEntity } from '../entity/project.entity';
-import { CreateProjectDto, UpdateProjectDto } from '../dto/project.dto';
+import {
+  CreateProjectDto,
+  QueryProjectDto,
+  UpdateProjectDto,
+} from '../dto/project.dto';
 import { StaffProjectService } from 'src/staff/service/staffProject.service';
 import { StaffProjectEntity } from 'src/staff/entity/staff_project.entity';
 
@@ -27,11 +31,12 @@ export class ProjectService {
       throw new HttpException('项目名称已存在', HttpStatus.BAD_REQUEST);
     }
 
-    const newData = this.repo.create(dto);
-    await this.staffProjectService.create(
-      dto.staffs.map((item) => ({ ...item, projectId: newData.id })),
-    );
-    return await this.repo.save(newData);
+    const newData = await this.repo.save(dto);
+    dto.staffs &&
+      (await this.staffProjectService.create(
+        dto.staffs.map((item) => ({ ...item, projectId: newData.id })),
+      ));
+    return;
   }
 
   async update(dto: UpdateProjectDto) {
@@ -46,9 +51,10 @@ export class ProjectService {
       name: dto.name,
       notes: dto.notes,
     });
-    await this.staffProjectService.create(
-      dto.staffs.map((item) => ({ ...item, projectId: data.id })),
-    );
+    dto.staffs &&
+      (await this.staffProjectService.create(
+        dto.staffs.map((item) => ({ ...item, projectId: data.id })),
+      ));
     const needRemove = data.staffProjects.filter(
       (staffProject) =>
         !dto.staffs.some((item) => item.projectId === staffProject.projectId),
@@ -57,7 +63,19 @@ export class ProjectService {
     return;
   }
 
-  findAll() {
+  async getList(query: QueryProjectDto) {
+    const [list, total] = await this.repo.findAndCount({
+      relations: ['staffProjects'],
+      where: {
+        name: Like(`%${query.name}%`),
+      },
+      skip: (query.pageNum - 1) * query.pageSize,
+      take: query.pageSize,
+    });
+    return { list, total };
+  }
+
+  async findAll() {
     return this.repo.find();
   }
 }

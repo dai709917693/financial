@@ -8,7 +8,8 @@ const form = ref<{
 async function login() {
   const { username, password } = form.value
   if (username && password) {
-    const data = await apiAuth.login(username, password)
+    await apiAuth.login(username, password)
+    router.push({ name: 'home' })
   }
 }
 </script>

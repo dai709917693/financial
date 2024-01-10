@@ -4,8 +4,8 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 export interface Response<T> {
   data: T;
 }
@@ -13,13 +13,10 @@ export interface Response<T> {
 export class TransformInterceptor<T>
   implements NestInterceptor<T, Response<T>>
 {
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<Response<T>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        return { data };
+        return { data, code: 200 };
       }),
     );
   }

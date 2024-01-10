@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import { apiProject } from '@/api'
+import { Search } from '@element-plus/icons-vue'
 import { DialogOpenType } from '@/constants'
 import { paginationTableData } from '@/components/pagination-table'
 import AddDialog from './add.dialog.vue'
 
-const { pageSize, currentPage, total, tableData, getList } = paginationTableData(() => {
-  return { data: { list: [{ name: 1 }], total: 1 } }
+const form = ref({
+  name: ''
 })
+
+const { pageSize, currentPage, total, tableData, getList } = paginationTableData(
+  (pagination: any) => apiProject.list({ name: form.value.name, ...pagination })
+)
 const addDialogRef = ref()
-const form = ref({})
+
 
 function openAdd() {
   addDialogRef.value.open()
@@ -22,9 +28,13 @@ function remove(row: any) {}
 
 <template>
   <el-form inline :model="form">
-    <el-form-item>
-      <el-button type="primary" @click="openAdd">新增项目</el-button>
+    <el-form-item label="项目名称">
+      <el-input placeholder="请输入项目名称" v-model="form.name" clearable></el-input>
     </el-form-item>
+    <el-form-item>
+      <el-button @click="getList" :icon="Search">搜索</el-button>
+    </el-form-item>
+    <el-button class="fr" type="primary" @click="openAdd">新增项目</el-button>
   </el-form>
   <el-table :data="tableData" border>
     <el-table-column prop="name" label="项目名称" width="300" />
@@ -46,7 +56,7 @@ function remove(row: any) {}
     @current-change="getList"
     @size-change="getList"
   />
-  <add-dialog ref="addDialogRef"></add-dialog>
+  <add-dialog ref="addDialogRef" @refresh="getList"></add-dialog>
 </template>
 <style lang="scss" scoped>
 .pagination {
