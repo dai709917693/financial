@@ -12,9 +12,6 @@ import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { RoleEntity } from './role.entity';
 
-// import { CartEntity } from 'src/cart/cart.entity';
-// import { OrderEntity } from 'src/order/order.entity';
-
 @Entity()
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')

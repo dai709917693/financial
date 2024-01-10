@@ -1,17 +1,30 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { CreateCategoryDto } from '../dto/';
-import { CategoryService } from '../service/category.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { ProjectService } from '../service/project.service';
+import { CreateProjectDto, UpdateProjectDto } from '../dto/project.dto';
 
 @Controller({
-  path: 'category',
+  path: 'project',
   version: '1',
 })
-export class CategoryController {
-  constructor(private service: CategoryService) {}
+export class ProjectController {
+  constructor(private service: ProjectService) {}
 
   @Post()
-  create(@Body() createDto: CreateCategoryDto) {
+  create(@Body() createDto: CreateProjectDto) {
     return this.service.create(createDto);
+  }
+
+  @Put()
+  update(@Body() createDto: UpdateProjectDto) {
+    return this.service.update(createDto);
   }
 
   @Get()
