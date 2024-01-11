@@ -11,7 +11,10 @@ const addTimeDialogRef = ref()
 const type = ref('detail')
 const checkData = ref<CheckData[]>([])
 const staffs = ref<Staff[]>([])
-const defData = computed(() => {
+
+watch(() => route.query.projectId, getData, { immediate: true })
+
+function getDefData() {
   const data: any = {}
   staffs.value.forEach((staff) => {
     data[staff.id] = {
@@ -20,8 +23,7 @@ const defData = computed(() => {
     }
   })
   return data
-})
-watch(() => route.query.projectId, getData, { immediate: true })
+}
 
 async function getData() {
   const res = await apiCheck.findOne(route.query.projectId as string)
@@ -49,7 +51,7 @@ function handleSelectTime(time: string) {
   })
   checkData.value.splice(insertIndex, 0, {
     time,
-    data: defData.value
+    data: getDefData()
   })
 }
 
