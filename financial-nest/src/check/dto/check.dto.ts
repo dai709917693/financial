@@ -8,7 +8,10 @@ import {
 
 interface CheckData {
   time: string;
-  data: Record<string, { attendance?: number; overtime?: number }>;
+  data: Record<
+    string,
+    { attendance?: number | string; overtime?: number | string }
+  >;
 }
 
 export class UpdateCheckDto {
@@ -16,5 +19,5 @@ export class UpdateCheckDto {
   readonly projectId: string;
 
   @IsArray()
-  readonly data: CheckData[];
+  readonly checkData: CheckData[];
 }

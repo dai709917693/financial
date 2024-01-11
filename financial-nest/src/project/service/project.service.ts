@@ -76,7 +76,7 @@ export class ProjectService {
     const [list, total] = await this.repo.findAndCount({
       relations: ['staffProjects', 'staffProjects.staff'],
       where: {
-        name: Like(`%${query.name}%`),
+        name: Like(`%${query.name ?? ''}%`),
       },
       skip: (query.pageNum - 1) * query.pageSize,
       take: query.pageSize,

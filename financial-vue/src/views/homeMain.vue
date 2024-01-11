@@ -5,7 +5,7 @@ import SiderLeft from './siderLeft.vue';
 <template>
   <el-container class="container">
     <el-header class="header"></el-header>
-    <el-container>
+    <el-container style="overflow: hidden;">
       <sider-left></sider-left>
       <el-main class="main">
         <router-view></router-view>

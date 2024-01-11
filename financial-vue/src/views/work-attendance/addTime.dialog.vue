@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ElMessage } from 'element-plus'
+
 const emit = defineEmits<{ (e: 'confirm', time: string): void }>()
 
 const dialogVisible = ref(false)
@@ -12,6 +14,10 @@ function close() {
 }
 
 async function confirm() {
+  if (!time.value) {
+    ElMessage.warning('请选择日期')
+    return
+  }
   emit('confirm', time.value)
   close()
   time.value = ''
@@ -30,7 +36,12 @@ defineExpose({
     width="500"
     :close-on-click-modal="false"
   >
-    <el-date-picker v-model="time" type="month" style="width: 100%"></el-date-picker>
+    <el-date-picker
+      v-model="time"
+      type="month"
+      value-format="YYYY-MM"
+      style="width: 100%"
+    ></el-date-picker>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="close">取消</el-button>

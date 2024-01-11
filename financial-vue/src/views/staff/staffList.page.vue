@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { apiStaff } from '@/api'
+import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { paginationTableData } from '@/components/pagination-table'
 import AddDialog from './add.dialog.vue'
@@ -40,9 +41,13 @@ async function remove(row: any) {
 
 <template>
   <el-form inline :model="form">
-    <el-form-item>
-      <el-button type="primary" @click="openAdd">新增员工</el-button>
+    <el-form-item label="姓名">
+      <el-input placeholder="请输入姓名" v-model="form.name" clearable></el-input>
     </el-form-item>
+    <el-form-item>
+      <el-button @click="getList" :icon="Search">搜索</el-button>
+    </el-form-item>
+    <el-button class="fr" type="primary" @click="openAdd">新增员工</el-button>
   </el-form>
   <el-table :data="tableData" border>
     <el-table-column prop="name" label="姓名" />

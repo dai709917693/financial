@@ -23,10 +23,10 @@ export class CheckEntity {
   @Column()
   time: string;
 
-  @Column()
+  @Column({ nullable: true })
   attendance: number;
 
-  @Column()
+  @Column({ nullable: true })
   overtime: number;
 
   @ManyToOne(

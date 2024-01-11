@@ -29,20 +29,20 @@ export class CheckController {
     return this.service.update(createDto);
   }
 
-  // @Get()
-  // getList(@Query() query: QueryProjectDto) {
-  //   return this.service.getList(query);
+  @Get(':id')
+  findOne(@Param('id') projectId: string) {
+    return this.service.getData(projectId);
+  }
+
+  // @Get('')
+  // getData(@Query() query: QueryCheckDto) {
+  //   return this.service.getData(query);
   // }
 
   // @Get('/all')
   // findAll() {
   //   return this.service.findAll();
   // }
-
-  //   @Get(':id')
-  //   findOne(@Param('id') id: string) {
-  //     return this.service.findOne(+id);
-  //   }
 
   //   @Put(':id')
   //   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
