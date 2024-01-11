@@ -16,6 +16,7 @@ import { PoliciesGuard } from './common/guard/auth.guard';
 import { CaslModule } from './casl/casl.module';
 import { ProjectModule } from './project/project.module';
 import { StaffModule } from './staff/staff.module';
+import { CheckModule } from './check/check.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { StaffModule } from './staff/staff.module';
     CaslModule,
     ProjectModule,
     StaffModule,
+    CheckModule,
   ],
   controllers: [AppController],
   providers: [

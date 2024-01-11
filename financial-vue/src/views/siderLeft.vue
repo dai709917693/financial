@@ -2,27 +2,26 @@
 const menus = [
   {
     label: '工资表',
-    route: { name: 'salaryList' },
+    route: { name: 'salaryList' }
+  },
+  {
+    label: '考勤',
+    route: { name: 'workAttendanceList' }
   },
   {
     label: '员工管理',
-    route: { name: 'staffList' },
+    route: { name: 'staffList' }
   },
   {
     label: '项目管理',
-    route: { name: 'projectList' },
+    route: { name: 'projectList' }
   }
-];
+]
 </script>
 
 <template>
   <el-aside width="200px" class="sider-left">
-    <el-menu
-      active-text-color="#ffd04b"
-      background-color="#545c64"
-      text-color="#fff"
-      router
-    >
+    <el-menu active-text-color="#ffd04b" background-color="#545c64" text-color="#fff" router>
       <el-menu-item
         v-for="(item, index) in menus"
         :key="index"

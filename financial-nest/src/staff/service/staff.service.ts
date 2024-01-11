@@ -25,7 +25,10 @@ export class StaffService {
   ) {}
 
   async create(dto: CreateStaffDto) {
-    const newData = await this.repo.save(dto);
+    const newData = await this.repo.save({
+      name: dto.name,
+      job: dto.job,
+    });
     await this.staffProjectService.create(
       dto.projects.map((item) => ({ ...item, staffId: newData.id })),
     );
@@ -60,9 +63,9 @@ export class StaffService {
     return;
   }
 
-  async findAll(query: QueryStaffDto) {
+  async getList(query: QueryStaffDto) {
     const [list, total] = await this.repo.findAndCount({
-      relations: ['staffProjects'],
+      relations: ['staffProjects', 'staffProjects.project'],
       where: {
         name: Like(`%${query.name}%`),
       },
@@ -70,5 +73,9 @@ export class StaffService {
       take: query.pageSize,
     });
     return { list, total };
+  }
+
+  async findAll() {
+    return this.repo.find();
   }
 }

@@ -6,6 +6,7 @@ import {
   IsArray,
 } from 'class-validator';
 export interface StaffProjectConfig {
+  id: string;
   staffId: string;
   projectId: string;
   // 出勤单价

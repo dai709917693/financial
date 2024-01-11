@@ -33,8 +33,13 @@ export class StaffController {
   }
 
   @Get()
-  findAll(@Query() query: QueryStaffDto) {
-    return this.service.findAll(query);
+  getList(@Query() query: QueryStaffDto) {
+    return this.service.getList(query);
+  }
+
+  @Get('/all')
+  findAll() {
+    return this.service.findAll();
   }
 
   @Delete(':id')

@@ -31,7 +31,10 @@ export class ProjectService {
       throw new HttpException('项目名称已存在', HttpStatus.BAD_REQUEST);
     }
 
-    const newData = await this.repo.save(dto);
+    const newData = await this.repo.save({
+      name: dto.name,
+      notes: dto.notes,
+    });
     dto.staffs &&
       (await this.staffProjectService.create(
         dto.staffs.map((item) => ({ ...item, projectId: newData.id })),
@@ -63,9 +66,15 @@ export class ProjectService {
     return;
   }
 
+  async remove(projectId: string) {
+    await this.staffProjectRepo.delete({ projectId });
+    await this.repo.delete({ id: projectId });
+    return;
+  }
+
   async getList(query: QueryProjectDto) {
     const [list, total] = await this.repo.findAndCount({
-      relations: ['staffProjects'],
+      relations: ['staffProjects', 'staffProjects.staff'],
       where: {
         name: Like(`%${query.name}%`),
       },

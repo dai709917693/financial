@@ -30,7 +30,6 @@ instance.interceptors.response.use(
     if (error.response.status === 401) {
       router.push({ name: 'login' })
     }
-    console.log(error)
     return Promise.resolve({
       state: false,
       message: error.response.data.message

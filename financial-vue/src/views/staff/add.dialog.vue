@@ -3,6 +3,8 @@ import { apiStaff, apiProject } from '@/api'
 import { DialogOpenType } from '@/constants'
 import type { Project, StaffProject } from '#types'
 import { ElMessage } from 'element-plus'
+import SelectDialog from '@/components/dialog/select.dialog.vue'
+import StaffProjectConfig from '@/components/staffProjectConfig.vue'
 
 const emit = defineEmits<{ (e: 'refresh'): void }>()
 
@@ -29,19 +31,13 @@ const typeLabel = computed(() => {
 })
 
 const formRef = ref()
-
-const selectedProject = ref()
-const projectList = ref<Project[]>([])
-
-interface UnitSalary {
-  overtimeUnitPrice: number
-  attendanceUnitPrice: number
-}
+const selectDialogRef = ref()
 
 const form = ref({
+  id: '',
   name: '',
   job: '',
-  projects: {} as Record<string, UnitSalary>
+  projects: [] as StaffProject[]
 })
 
 const rules = ref({
@@ -51,39 +47,49 @@ const rules = ref({
   }
 })
 
-function handleSelectionChange(value: Project[]) {
-  const res: string[] = []
-  value.forEach((item) => {
-    res.push(item.id)
-    if (!form.value.projects[item.id]) {
-      form.value.projects[item.id] = {
-        overtimeUnitPrice: 0,
-        attendanceUnitPrice: 0
-      }
-    }
-  })
-  selectedProject.value = res
+async function getProjectList(keyword: string) {
+  const res = await apiProject.allList()
+  return (
+    res.data?.filter(
+      (project) =>
+        !form.value.projects.some((item) => item.projectId === project.id) &&
+        (keyword ? project.name.search(keyword) !== -1 : true)
+    ) || []
+  )
+}
+
+function openSelectDialog() {
+  selectDialogRef.value.open(form.value.projects)
 }
 
 async function open(type = DialogOpenType.ADD, data?: any) {
   if (data) {
-    form.value = data
+    form.value = { ...data, projects: [...data.staffProjects] }
   } else {
     reset()
   }
   openType.value = type
   dialogVisible.value = true
-  const res = await apiProject.allList()
-  projectList.value = res.data ?? []
 }
 
 function reset() {
   form.value = {
+    id: '',
     name: '',
     job: '',
-    projects: {}
+    projects: []
   }
-  selectedProject.value = []
+}
+
+function handleSelectProject(projects: Project[]) {
+  projects.forEach((item) => {
+    form.value.projects.push({
+      project: item,
+      projectId: item.id,
+      attendanceUnitPrice: 0,
+      overtimeUnitPrice: 0
+    })
+  })
 }
 
 function close() {
@@ -116,7 +122,7 @@ defineExpose({
     :title="title"
     draggable
     top="100px"
-    width="1000"
+    width="800"
     :close-on-click-modal="false"
   >
     <el-form ref="formRef" :model="form" label-width="auto" :rules="rules">
@@ -128,27 +134,11 @@ defineExpose({
           <el-option></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="项目">
-        <el-table border :data="projectList" @selection-change="handleSelectionChange" style="height: 400px;">
-          <el-table-column type="selection"></el-table-column>
-          <el-table-column prop="name" label="项目名称"></el-table-column>
-          <el-table-column label="出勤单价（元/天）">
-            <template #default="{ row }">
-              <el-input-number
-                v-if="form.projects[row.id] && selectedProject.includes(row.id)"
-                v-model="form.projects[row.id].attendanceUnitPrice"
-              ></el-input-number>
-            </template>
-          </el-table-column>
-          <el-table-column label="加班单价（元/小时）">
-            <template #default="{ row }">
-              <el-input-number
-                v-if="form.projects[row.id] && selectedProject.includes(row.id)"
-                v-model="form.projects[row.id].overtimeUnitPrice"
-              ></el-input-number>
-            </template>
-          </el-table-column>
-        </el-table>
+      <el-form-item v-if="form.projects.length !== 0" label="项目">
+        <staff-project-config v-model="form.projects" type="project"></staff-project-config>
+      </el-form-item>
+      <el-form-item label=" " style="margin: 0">
+        <el-button @click="openSelectDialog">加入项目</el-button>
       </el-form-item>
     </el-form>
 
@@ -159,6 +149,13 @@ defineExpose({
       </span>
     </template>
   </el-dialog>
+  <select-dialog
+    ref="selectDialogRef"
+    title="选择加入的项目"
+    keyword-label="项目名称"
+    :get-list-fun="getProjectList"
+    @confirm="handleSelectProject"
+  ></select-dialog>
 </template>
 <style lang="scss">
 .project-transfer {

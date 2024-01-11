@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { apiStaff } from '@/api'
-
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { paginationTableData } from '@/components/pagination-table'
 import AddDialog from './add.dialog.vue'
+import { DialogOpenType } from '@/constants'
 
 const form = ref({
   name: ''
@@ -14,6 +15,26 @@ const addDialogRef = ref()
 
 function openAdd() {
   addDialogRef.value.open()
+}
+function openEdit(row: any) {
+  addDialogRef.value.open(DialogOpenType.EDIT, row)
+}
+
+async function remove(row: any) {
+  ElMessageBox.confirm('确认删除?', '删除', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    buttonSize: 'default',
+    type: 'warning'
+  })
+    .then(async () => {
+      const res = await apiStaff.remove(row.id)
+      if (res.state) {
+        ElMessage.success('删除成功')
+        getList()
+      }
+    })
+    .catch(() => {})
 }
 </script>
 
@@ -29,8 +50,16 @@ function openAdd() {
     <el-table-column prop="workType" label="所属项目">
       <template #default="{ row }">
         <div class="project-tag">
-          <el-tag v-for="item in row.staffProjects" :key="item.projectId">{{ item.name }}</el-tag>
+          <el-tag v-for="item in row.staffProjects" :key="item.projectId">{{
+            item.project.name
+          }}</el-tag>
         </div>
+      </template>
+    </el-table-column>
+    <el-table-column label="操作">
+      <template #default="{ row }">
+        <el-button @click="openEdit(row)">编辑</el-button>
+        <el-button type="danger" @click="remove(row)">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
