@@ -4,6 +4,8 @@ import { Search } from '@element-plus/icons-vue'
 import { DialogOpenType } from '@/constants'
 import { paginationTableData } from '@/components/pagination-table'
 import AddDialog from './add.dialog.vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
 
 const form = ref({
   name: ''
@@ -23,7 +25,24 @@ function openEdit(row: any) {
   addDialogRef.value.open(DialogOpenType.EDIT, row)
 }
 
-function remove(row: any) {}
+function remove(row: any) {
+  ElMessageBox.confirm('确认删除?', '删除', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    buttonSize: 'default',
+    type: 'warning'
+  })
+    .then(async () => {
+      const res = await apiProject.remove(row.id)
+      if (res.state) {
+        ElMessage.success('删除成功')
+        getList()
+      } else {
+        ElMessage.error(res.message ?? '删除失败')
+      }
+    })
+    .catch(() => {})
+}
 </script>
 
 <template>

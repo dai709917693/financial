@@ -11,12 +11,16 @@ import {
 import { StaffProjectEntity } from '../entity/staff_project.entity';
 import { ProjectEntity } from 'src/project/entity/project.entity';
 import { StaffProjectService } from './staffProject.service';
+import { CheckEntity } from 'src/check/entity/check.entity';
 
 @Injectable()
 export class StaffService {
   constructor(
     @InjectRepository(StaffEntity)
     private repo: Repository<StaffEntity>,
+
+    @InjectRepository(CheckEntity)
+    private checkRepo: Repository<CheckEntity>,
 
     @InjectRepository(StaffProjectEntity)
     private staffProjectRepo: Repository<StaffProjectEntity>,
@@ -53,12 +57,24 @@ export class StaffService {
       (staffProject) =>
         !dto.projects.some((item) => item.projectId === staffProject.projectId),
     );
-    needRemove.length !== 0 && (await this.staffProjectRepo.remove(needRemove));
+    if (needRemove.length !== 0) {
+      await Promise.all(
+        needRemove.map((item) =>
+          this.checkRepo.delete({ staffProjectId: item.id }),
+        ),
+      );
+      await this.staffProjectRepo.remove(needRemove);
+    }
     return;
   }
 
   async remove(staffId: string) {
-    await this.staffProjectRepo.delete({ staffId });
+    const res = await this.staffProjectRepo.findBy({
+      staffId,
+    });
+    if (res.length !== 0) {
+      throw new HttpException('该员工还有未退出的项目', HttpStatus.FORBIDDEN);
+    }
     await this.repo.delete({ id: staffId });
     return;
   }

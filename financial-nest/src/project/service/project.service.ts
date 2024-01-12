@@ -68,7 +68,12 @@ export class ProjectService {
   }
 
   async remove(projectId: string) {
-    await this.staffProjectRepo.delete({ projectId });
+    const res = await this.staffProjectRepo.findBy({
+      projectId,
+    });
+    if (res.length !== 0) {
+      throw new HttpException('该项目还有未退出的员工', HttpStatus.FORBIDDEN);
+    }
     await this.repo.delete({ id: projectId });
     return;
   }

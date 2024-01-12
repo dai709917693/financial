@@ -33,6 +33,8 @@ async function remove(row: any) {
       if (res.state) {
         ElMessage.success('删除成功')
         getList()
+      } else {
+        ElMessage.error(res.message ?? '删除失败')
       }
     })
     .catch(() => {})

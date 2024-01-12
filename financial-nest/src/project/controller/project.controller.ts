@@ -43,18 +43,8 @@ export class ProjectController {
     return this.service.findAll(query);
   }
 
-  //   @Get(':id')
-  //   findOne(@Param('id') id: string) {
-  //     return this.service.findOne(+id);
-  //   }
-
-  //   @Put(':id')
-  //   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //     return this.service.update(+id, updateUserDto);
-  //   }
-
-  //   @Delete(':id')
-  //   remove(@Param('id') id: string) {
-  //     return this.service.remove(+id);
-  //   }
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
+  }
 }

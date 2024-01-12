@@ -87,14 +87,18 @@ const getSummaries = (param: SummaryMethodProps) => {
       return
     }
     const [dataIndex, prop] = column.property.split('_')
-    const values = data.map(
-      (item) => (salaryData.value[Number(dataIndex)].data?.[item.id] as any)?.[prop] ?? 0
-    )
-    sums[index] = values
-      .reduce((prev, curr) => {
-        return prev + curr
-      }, 0)
-      .toString()
+    if (dataIndex === 'amountTo') {
+      //
+    } else {
+      const values = data.map(
+        (item) => (salaryData.value[Number(dataIndex)].data?.[item.id] as any)?.[prop] ?? 0
+      )
+      sums[index] = values
+        .reduce((prev, curr) => {
+          return prev + curr
+        }, 0)
+        .toString()
+    }
   })
   return sums
 }
@@ -104,7 +108,9 @@ function cellClassName({ column }: any) {
     return 'cell-single'
   }
   const [dataIndex, prop] = column.property.split('_')
-  if (prop) {
+  if (dataIndex === 'amountTo') {
+    return 'cell-other'
+  } else if (prop) {
     return dataIndex % 2 === 0 ? 'cell-double' : 'cell-single'
   }
 }
@@ -114,7 +120,9 @@ function headerClassName({ column }: any) {
     return 'cell-single'
   }
   const [dataIndex, prop] = column.property.split('_')
-  if (prop) {
+  if (dataIndex === 'amountTo') {
+    return 'cell-other'
+  } else if (prop) {
     return dataIndex % 2 === 0 ? 'cell-double' : 'cell-single'
   } else {
     return 'cell-single'
@@ -235,15 +243,15 @@ function headerClassName({ column }: any) {
       <el-table-column :prop="index + '_reserveSalary'" label="预留工资" width="90" />
     </el-table-column>
 
-    <el-table-column label="合计" prop="amountTo" align="center" width="100">
-      <el-table-column label="出勤（天）" width="120"> </el-table-column>
-      <el-table-column label="加班（小时）" width="120"> </el-table-column>
-      <el-table-column label="出勤工资" width="100"> </el-table-column>
-      <el-table-column label="加班工资" width="100"> </el-table-column>
-      <el-table-column label="补助" width="100" />
-      <el-table-column label="应发工资" width="100"> </el-table-column>
-      <el-table-column label="已发工资" width="100"> </el-table-column>
-      <el-table-column label="结余工资" width="100"> </el-table-column>
+    <el-table-column label="合计" prop="amountTo_header" align="center" width="100">
+      <el-table-column label="出勤（天）" width="120" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="加班（小时）" width="120" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="出勤工资" width="100" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="加班工资" width="100" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="补助" width="100" prop="amountTo_header" />
+      <el-table-column label="应发工资" width="100" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="已发工资" width="100" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="结余工资" width="100" prop="amountTo_header"> </el-table-column>
     </el-table-column>
     <!-- <el-table-column label="扣款" width="100"> </el-table-column> -->
   </el-table>
@@ -260,10 +268,13 @@ function headerClassName({ column }: any) {
     background-color: #fff !important;
   }
   .cell-double {
-    background-color: #f5f7fa;
+    background-color: #f5f7fa !important;
   }
   .el-table__footer-wrapper tbody td.el-table__cell {
     background-color: #fafafa;
+  }
+  .cell-other {
+    background-color: #fafafa !important;
   }
 }
 </style>

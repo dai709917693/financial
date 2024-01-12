@@ -33,5 +33,9 @@ export const apiProject = {
   async update(params: CreateParams & { id: string }) {
     const res = await instance.put<any, CommonApiRes<any>>('v1/project', params)
     return res
+  },
+  async remove(id: string) {
+    const res = await instance.delete<any, CommonApiRes<any>>('v1/project/' + id)
+    return res
   }
 }
