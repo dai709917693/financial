@@ -18,8 +18,12 @@ export const apiProject = {
     const res = await instance.get<any, CommonApiRes<CommonList<Project>>>('v1/project', { params })
     return res
   },
-  async allList() {
-    const res = await instance.get<any, CommonApiRes<Project[]>>('v1/project/all')
+  async allList(hasStaff?: boolean) {
+    const res = await instance.get<any, CommonApiRes<Project[]>>('v1/project/all', {
+      params: {
+        hasStaff
+      }
+    })
     return res
   },
   async create(params: CreateParams) {

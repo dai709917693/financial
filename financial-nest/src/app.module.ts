@@ -17,6 +17,7 @@ import { CaslModule } from './casl/casl.module';
 import { ProjectModule } from './project/project.module';
 import { StaffModule } from './staff/staff.module';
 import { CheckModule } from './check/check.module';
+import { SalaryModule } from './salary/salary.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { CheckModule } from './check/check.module';
     ProjectModule,
     StaffModule,
     CheckModule,
+    SalaryModule,
   ],
   controllers: [AppController],
   providers: [

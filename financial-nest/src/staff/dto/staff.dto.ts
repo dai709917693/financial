@@ -19,6 +19,10 @@ export class QueryStaffDto {
   @IsOptional()
   readonly name?: string;
 
+  @IsString()
+  @IsOptional()
+  readonly projectId?: string;
+
   @IsNumberString()
   pageNum: number;
 

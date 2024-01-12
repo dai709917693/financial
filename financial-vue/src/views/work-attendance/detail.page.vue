@@ -26,6 +26,9 @@ function getDefData() {
 }
 
 async function getData() {
+  if (!route.query.projectId) {
+    return
+  }
   const res = await apiCheck.findOne(route.query.projectId as string)
   if (res.state && res.data) {
     staffs.value = res.data.staffs

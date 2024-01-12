@@ -11,6 +11,7 @@ import {
 import { ProjectService } from '../service/project.service';
 import {
   CreateProjectDto,
+  QueryAllProjectDto,
   QueryProjectDto,
   UpdateProjectDto,
 } from '../dto/project.dto';
@@ -38,8 +39,8 @@ export class ProjectController {
   }
 
   @Get('/all')
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query() query: QueryAllProjectDto) {
+    return this.service.findAll(query);
   }
 
   //   @Get(':id')

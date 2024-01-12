@@ -83,10 +83,8 @@ export class CheckService {
       data: Record<string, { attendance?: number; overtime?: number }>;
     }[] = [];
     checks.forEach((check) => {
-      let curIndex = dataIndex[check.time];
       if (dataIndex[check.time] === undefined) {
         dataIndex[check.time] = checkData.length;
-        curIndex = checkData.length;
         const defData = {};
         staffList.forEach((staff) => {
           defData[staff.id] = {
@@ -100,7 +98,7 @@ export class CheckService {
         });
       }
       const staffId = staffObj[check.staffProjectId].id;
-      checkData[curIndex].data[staffId] = {
+      checkData[dataIndex[check.time]].data[staffId] = {
         overtime: check.overtime,
         attendance: check.attendance,
       };

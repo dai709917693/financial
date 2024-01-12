@@ -1,18 +1,71 @@
 <script setup lang="ts">
-// import { appApi } from '@/api';
-import moment from 'moment'
+import { apiSalary, apiProject, apiStaff, type SalaryData } from '@/api'
+import type { Staff, Project } from '#types'
 import type { TableColumnCtx } from 'element-plus'
-import { paginationTableData } from '@/components/pagination-table'
 
-const { pageSize, currentPage, total, tableData, getList } = paginationTableData(() => {
-  return { data: { list: [{ name: '啊啊啊' }], total: 1 } }
-})
-
+const salaryData = ref<SalaryData[]>([])
+const rows = ref<(Staff | Project)[]>([])
 const form = ref({
-  time: new Date()
+  time: '',
+  projectId: '',
+  staffId: ''
 })
-const tableTitle = computed(() => moment(form.value.time).format('YYYY年MM月') + '工资表')
 
+const projectList = ref<Project[]>([])
+const staffList = ref<Staff[]>([])
+const staffLoading = ref(false)
+const emptyTips = computed(() => {
+  if (!form.value.projectId && !form.value.staffId) {
+    return '请选择项目或员工'
+  } else {
+    return '无数据'
+  }
+})
+
+async function getList() {
+  if (!form.value.projectId && !form.value.staffId) {
+    salaryData.value = []
+    rows.value = []
+    return
+  }
+  const res = await apiSalary.findOne({
+    ...form.value
+  })
+  if (res.state && res.data) {
+    salaryData.value = res.data.salaryData
+    rows.value = res.data.rows
+  } else {
+    salaryData.value = []
+    rows.value = []
+  }
+}
+async function getProjectList() {
+  const res = await apiProject.allList(true)
+  if (res.state && res.data) {
+    projectList.value = res.data
+  }
+}
+
+const remoteMethod = async (query: string) => {
+  if (query) {
+    staffLoading.value = true
+    const res = await apiStaff.list({
+      name: query,
+      projectId: form.value.projectId,
+      pageNum: 1,
+      pageSize: 10
+    })
+    if (res.state && res.data) {
+      staffList.value = res.data.list
+    }
+    staffLoading.value = false
+  } else {
+    staffList.value = []
+  }
+}
+
+getList()
+getProjectList()
 interface SummaryMethodProps<T = any> {
   columns: TableColumnCtx<T>[]
   data: T[]
@@ -25,69 +78,192 @@ const getSummaries = (param: SummaryMethodProps) => {
     if (index === 0) {
       sums[index] = '合计'
       return
+    } else if (
+      column.property === 'job' ||
+      column.property === 'attendanceUnitPrice' ||
+      column.property === 'overtimeUnitPrice' ||
+      !column.property
+    ) {
+      return
     }
-    const values = data.map((item) => Number(item[column.property]))
-    if (!values.every((value) => Number.isNaN(value))) {
-      sums[index] = values
-        .reduce((prev, curr) => {
-          const value = Number(curr)
-          if (!Number.isNaN(value)) {
-            return prev + curr
-          } else {
-            return prev
-          }
-        }, 0)
-        .toString()
-    } else {
-      sums[index] = 'N/A'
-    }
+    const [dataIndex, prop] = column.property.split('_')
+    const values = data.map(
+      (item) => (salaryData.value[Number(dataIndex)].data?.[item.id] as any)?.[prop] ?? 0
+    )
+    sums[index] = values
+      .reduce((prev, curr) => {
+        return prev + curr
+      }, 0)
+      .toString()
   })
   return sums
+}
+
+function cellClassName({ column }: any) {
+  if (!column.property) {
+    return 'cell-single'
+  }
+  const [dataIndex, prop] = column.property.split('_')
+  if (prop) {
+    return dataIndex % 2 === 0 ? 'cell-double' : 'cell-single'
+  }
+}
+
+function headerClassName({ column }: any) {
+  if (!column.property) {
+    return 'cell-single'
+  }
+  const [dataIndex, prop] = column.property.split('_')
+  if (prop) {
+    return dataIndex % 2 === 0 ? 'cell-double' : 'cell-single'
+  } else {
+    return 'cell-single'
+  }
 }
 </script>
 
 <template>
   <el-form inline :model="form">
-    <el-form-item label="时间：">
-      <el-date-picker v-model="form.time" type="month"></el-date-picker>
+    <el-form-item label="项目">
+      <el-select
+        v-model="form.projectId"
+        placeholder="请选择项目"
+        filterable
+        clearable
+        @change="getList"
+      >
+        <el-option
+          v-for="item in projectList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        ></el-option>
+      </el-select>
     </el-form-item>
-    <el-form-item>
-      <el-button type="primary">新增人员</el-button>
+    <el-form-item label="员工">
+      <el-select
+        v-model="form.staffId"
+        placeholder="请输入姓名"
+        filterable
+        remote
+        :remote-method="remoteMethod"
+        clearable
+        :loading="staffLoading"
+        @change="getList"
+      >
+        <el-option
+          v-for="item in staffList"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        ></el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="时间">
+      <el-date-picker
+        v-model="form.time"
+        type="month"
+        value-format="YYYY-MM"
+        clearable
+        @change="getList"
+      ></el-date-picker>
     </el-form-item>
   </el-form>
-  <el-table :data="tableData" border show-summary :summary-method="getSummaries">
-    <el-table-column :label="tableTitle" align="center">
-      <el-table-column prop="name" label="姓名" width="80" />
-      <el-table-column prop="job" label="工种" width="80" />
-      <el-table-column label="出勤" align="center">
-        <el-table-column prop="attendance" label="出勤（天）" />
-        <el-table-column prop="attendanceUnitPrice" label="单价（元/天）" />
-        <el-table-column prop="attendanceTotalPrice" label="总额（元）" />
+
+  <el-table
+    v-if="salaryData.length"
+    class="salary-table"
+    :data="rows"
+    border
+    show-summary
+    :summary-method="getSummaries"
+    scrollbar-always-on
+    :cell-class-name="cellClassName"
+    :header-cell-class-name="headerClassName"
+  >
+    <el-table-column prop="name" :label="form.projectId ? '姓名' : '项目名称'" width="80" fixed />
+    <el-table-column v-if="form.projectId" prop="job" label="工种" width="80" fixed />
+    <el-table-column prop="attendanceUnitPrice" fixed width="100">
+      <template #header>
+        出勤单价
+        <br />
+        (元/天)
+      </template>
+    </el-table-column>
+    <el-table-column prop="overtimeUnitPrice" fixed width="100">
+      <template #header>
+        加班单价
+        <br />
+        (元/小时)
+      </template>
+    </el-table-column>
+
+    <el-table-column
+      v-for="(item, index) in salaryData"
+      :key="item.time"
+      :label="item.time"
+      :prop="index + '_header'"
+      align="center"
+    >
+      <el-table-column label="出勤" align="center" :prop="index + '_header'">
+        <el-table-column :prop="index + '_attendance'" label="出勤（天）" width="120">
+          <template #default="{ row }">
+            {{ item.data[row.id]?.attendance }}
+          </template>
+        </el-table-column>
+        <el-table-column :prop="index + '_attendanceSalary'" label="总额（元）" width="120">
+          <template #default="{ row }">
+            {{ item.data[row.id]?.attendanceSalary }}
+          </template>
+        </el-table-column>
       </el-table-column>
-      <el-table-column label="加班" align="center">
-        <el-table-column prop="overtime" label="加班（小时）" />
-        <el-table-column prop="overtimeUnitPrice" label="单价（元/小时）" />
-        <el-table-column prop="overtimeTotalPrice" label="总额（元）" />
+      <el-table-column label="加班" align="center" :prop="index + '_header'">
+        <el-table-column :prop="index + '_overtime'" label="加班（小时）" width="120">
+          <template #default="{ row }">
+            {{ item.data[row.id]?.overtime }}
+          </template>
+        </el-table-column>
+        <el-table-column :prop="index + '_overtimeSalary'" label="总额（元）" width="120">
+          <template #default="{ row }">
+            {{ item.data[row.id]?.overtimeSalary }}
+          </template>
+        </el-table-column>
       </el-table-column>
 
-      <el-table-column prop="totalSalary" label="应发工资" />
-      <el-table-column prop="paidSalary" label="已发工资" />
-      <el-table-column prop="reserveSalary" label="预留工资" />
+      <el-table-column :prop="index + '_totalSalary'" label="应发工资" width="90" />
+      <el-table-column :prop="index + '_paidSalary'" label="已发工资" width="90" />
+      <el-table-column :prop="index + '_reserveSalary'" label="预留工资" width="90" />
     </el-table-column>
+
+    <el-table-column label="合计" prop="amountTo" align="center" width="100">
+      <el-table-column label="出勤（天）" width="120"> </el-table-column>
+      <el-table-column label="加班（小时）" width="120"> </el-table-column>
+      <el-table-column label="出勤工资" width="100"> </el-table-column>
+      <el-table-column label="加班工资" width="100"> </el-table-column>
+      <el-table-column label="补助" width="100" />
+      <el-table-column label="应发工资" width="100"> </el-table-column>
+      <el-table-column label="已发工资" width="100"> </el-table-column>
+      <el-table-column label="结余工资" width="100"> </el-table-column>
+    </el-table-column>
+    <!-- <el-table-column label="扣款" width="100"> </el-table-column> -->
   </el-table>
-  <el-pagination
-    v-model:current-page="currentPage"
-    v-model:page-size="pageSize"
-    class="pagination"
-    layout="prev, pager, next, sizes"
-    background
-    :total="total"
-    @current-change="getList"
-    @size-change="getList"
-  />
+  <el-empty v-else :description="emptyTips" />
 </template>
 <style lang="scss" scoped>
 .pagination {
   margin-top: 10px;
+}
+</style>
+<style lang="scss">
+.salary-table {
+  .cell-single {
+    background-color: #fff !important;
+  }
+  .cell-double {
+    background-color: #f5f7fa;
+  }
+  .el-table__footer-wrapper tbody td.el-table__cell {
+    background-color: #fafafa;
+  }
 }
 </style>

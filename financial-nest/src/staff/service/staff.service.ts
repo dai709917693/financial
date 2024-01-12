@@ -64,11 +64,25 @@ export class StaffService {
   }
 
   async getList(query: QueryStaffDto) {
+    let where: any = {
+      name: Like(`%${query.name}%`),
+    };
+    if (query.projectId) {
+      const staffProjects = await this.staffProjectRepo.find({
+        relations: ['project'],
+        where: {
+          projectId: query.projectId,
+        },
+      });
+      where = staffProjects.map((item) => ({
+        id: item.staffId,
+        name: Like(`%${query.name}%`),
+      }));
+    }
+
     const [list, total] = await this.repo.findAndCount({
       relations: ['staffProjects', 'staffProjects.project'],
-      where: {
-        name: Like(`%${query.name}%`),
-      },
+      where,
       skip: (query.pageNum - 1) * query.pageSize,
       take: query.pageSize,
     });

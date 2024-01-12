@@ -4,6 +4,7 @@ import { Like, Repository } from 'typeorm';
 import { ProjectEntity } from '../entity/project.entity';
 import {
   CreateProjectDto,
+  QueryAllProjectDto,
   QueryProjectDto,
   UpdateProjectDto,
 } from '../dto/project.dto';
@@ -84,7 +85,20 @@ export class ProjectService {
     return { list, total };
   }
 
-  async findAll() {
-    return this.repo.find();
+  async findAll(query: QueryAllProjectDto) {
+    const res = await this.repo.find({
+      relations: query.hasStaff === 'true' ? ['staffProjects'] : [],
+    });
+    if (query.hasStaff) {
+      const doneRes = [];
+      res.forEach((item) => {
+        if (item.staffProjects.length !== 0) {
+          delete item.staffProjects;
+          doneRes.push(item);
+        }
+      });
+      return doneRes;
+    }
+    return res;
   }
 }

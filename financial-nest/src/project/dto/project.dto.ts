@@ -4,6 +4,7 @@ import {
   MaxLength,
   IsArray,
   IsNumberString,
+  IsBooleanString,
 } from 'class-validator';
 import { StaffProjectConfig } from 'src/staff/dto/staff.dto';
 
@@ -17,6 +18,12 @@ export class QueryProjectDto {
 
   @IsNumberString()
   pageSize: number;
+}
+
+export class QueryAllProjectDto {
+  @IsBooleanString()
+  @IsOptional()
+  readonly hasStaff: string;
 }
 
 export class CreateProjectDto {
