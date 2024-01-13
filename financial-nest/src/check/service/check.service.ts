@@ -68,6 +68,12 @@ export class CheckService {
         projectId: projectId,
       },
     });
+    if (staffProjects.length === 0) {
+      return {
+        staffs: [],
+        checkData: [],
+      };
+    }
     const ids = [];
     const staffObj: Record<string, StaffEntity> = {};
     const staffList: StaffEntity[] = [];
