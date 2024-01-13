@@ -188,17 +188,18 @@ function headerClassName({ column }: any) {
     scrollbar-always-on
     :cell-class-name="cellClassName"
     :header-cell-class-name="headerClassName"
+    size="default"
   >
     <el-table-column prop="name" :label="form.projectId ? '姓名' : '项目名称'" width="80" fixed />
     <el-table-column v-if="form.projectId" prop="job" label="工种" width="80" fixed />
-    <el-table-column prop="attendanceUnitPrice" fixed width="100">
+    <el-table-column prop="attendanceUnitPrice" fixed width="90">
       <template #header>
         出勤单价
         <br />
         (元/天)
       </template>
     </el-table-column>
-    <el-table-column prop="overtimeUnitPrice" fixed width="100">
+    <el-table-column prop="overtimeUnitPrice" fixed width="90">
       <template #header>
         加班单价
         <br />
@@ -214,24 +215,24 @@ function headerClassName({ column }: any) {
       align="center"
     >
       <el-table-column label="出勤" align="center" :prop="index + '_header'">
-        <el-table-column :prop="index + '_attendance'" label="出勤（天）" width="120">
+        <el-table-column :prop="index + '_attendance'" label="出勤（天）" width="110">
           <template #default="{ row }">
             {{ item.data[row.id]?.attendance }}
           </template>
         </el-table-column>
-        <el-table-column :prop="index + '_attendanceSalary'" label="总额（元）" width="120">
+        <el-table-column :prop="index + '_attendanceSalary'" label="总额（元）" width="110">
           <template #default="{ row }">
             {{ item.data[row.id]?.attendanceSalary }}
           </template>
         </el-table-column>
       </el-table-column>
       <el-table-column label="加班" align="center" :prop="index + '_header'">
-        <el-table-column :prop="index + '_overtime'" label="加班（小时）" width="120">
+        <el-table-column :prop="index + '_overtime'" label="加班（小时）" width="110">
           <template #default="{ row }">
             {{ item.data[row.id]?.overtime }}
           </template>
         </el-table-column>
-        <el-table-column :prop="index + '_overtimeSalary'" label="总额（元）" width="120">
+        <el-table-column :prop="index + '_overtimeSalary'" label="总额（元）" width="110">
           <template #default="{ row }">
             {{ item.data[row.id]?.overtimeSalary }}
           </template>
@@ -243,15 +244,15 @@ function headerClassName({ column }: any) {
       <el-table-column :prop="index + '_reserveSalary'" label="预留工资" width="90" />
     </el-table-column>
 
-    <el-table-column label="合计" prop="amountTo_header" align="center" width="100">
-      <el-table-column label="出勤（天）" width="120" prop="amountTo_header"> </el-table-column>
-      <el-table-column label="加班（小时）" width="120" prop="amountTo_header"> </el-table-column>
-      <el-table-column label="出勤工资" width="100" prop="amountTo_header"> </el-table-column>
-      <el-table-column label="加班工资" width="100" prop="amountTo_header"> </el-table-column>
-      <el-table-column label="补助" width="100" prop="amountTo_header" />
-      <el-table-column label="应发工资" width="100" prop="amountTo_header"> </el-table-column>
-      <el-table-column label="已发工资" width="100" prop="amountTo_header"> </el-table-column>
-      <el-table-column label="结余工资" width="100" prop="amountTo_header"> </el-table-column>
+    <el-table-column label="合计" prop="amountTo_header" align="center" width="90">
+      <el-table-column label="出勤（天）" width="110" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="加班（小时）" width="110" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="出勤工资" width="90" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="加班工资" width="90" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="补助" width="90" prop="amountTo_header" />
+      <el-table-column label="应发工资" width="90" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="已发工资" width="90" prop="amountTo_header"> </el-table-column>
+      <el-table-column label="结余工资" width="90" prop="amountTo_header"> </el-table-column>
     </el-table-column>
     <!-- <el-table-column label="扣款" width="100"> </el-table-column> -->
   </el-table>
@@ -275,6 +276,11 @@ function headerClassName({ column }: any) {
   }
   .cell-other {
     background-color: #fafafa !important;
+  }
+  .hover-row {
+    .el-table__cell {
+      background-color: #ebeef5 !important;
+    }
   }
 }
 </style>

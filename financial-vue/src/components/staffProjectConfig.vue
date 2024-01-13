@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import type { StaffProject } from '#types'
 
-const props = defineProps<{ modelValue: StaffProject[]; type: 'staff' | 'project' }>()
+const props = withDefaults(
+  defineProps<{
+    modelValue: StaffProject[]
+    type: 'staff' | 'project'
+    disabled?: boolean
+  }>(),
+  {
+    disabled: false
+  }
+)
 const emit = defineEmits<{ (e: 'update:modelValue', val: StaffProject[]): void }>()
 
 const doneValue = computed({
@@ -30,15 +39,21 @@ function removeProject(index: number) {
     </el-table-column>
     <el-table-column label="出勤单价（元/天）" width="190">
       <template #default="{ row }">
-        <el-input-number v-model="row.attendanceUnitPrice" size="default"></el-input-number>
+        <div v-if="disabled">
+          {{ row.attendanceUnitPrice }}
+        </div>
+        <el-input-number v-else v-model="row.attendanceUnitPrice" size="default"></el-input-number>
       </template>
     </el-table-column>
     <el-table-column label="加班单价（元/小时）" width="190">
       <template #default="{ row }">
-        <el-input-number v-model="row.overtimeUnitPrice" size="default"></el-input-number>
+        <div v-if="disabled">
+          {{ row.overtimeUnitPrice }}
+        </div>
+        <el-input-number v-else v-model="row.overtimeUnitPrice" size="default"></el-input-number>
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="100">
+    <el-table-column v-if="!disabled" label="操作" width="100">
       <template #default="{ $index }">
         <el-button type="danger" size="default" @click="removeProject($index)">删除</el-button>
       </template>

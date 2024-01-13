@@ -6,7 +6,6 @@ import { paginationTableData } from '@/components/pagination-table'
 import AddDialog from './add.dialog.vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-
 const form = ref({
   name: ''
 })
@@ -16,13 +15,12 @@ const { pageSize, currentPage, total, tableData, getList } = paginationTableData
 )
 const addDialogRef = ref()
 
-
 function openAdd() {
   addDialogRef.value.open()
 }
 
-function openEdit(row: any) {
-  addDialogRef.value.open(DialogOpenType.EDIT, row)
+function openDetail(row: any) {
+  addDialogRef.value.open(DialogOpenType.DETAIL, row)
 }
 
 function remove(row: any) {
@@ -60,7 +58,7 @@ function remove(row: any) {
     <el-table-column prop="notes" label="备注" />
     <el-table-column label="操作">
       <template #default="{ row }">
-        <el-button @click="openEdit(row)">编辑</el-button>
+        <el-button @click="openDetail(row)">详情</el-button>
         <el-button type="danger" @click="remove(row)">删除</el-button>
       </template>
     </el-table-column>

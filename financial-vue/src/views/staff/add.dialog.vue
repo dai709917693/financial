@@ -30,6 +30,10 @@ const typeLabel = computed(() => {
   }
 })
 
+const disabled = computed(() => {
+  return openType.value === DialogOpenType.DETAIL
+})
+
 const formRef = ref()
 const selectDialogRef = ref()
 
@@ -127,17 +131,21 @@ defineExpose({
   >
     <el-form ref="formRef" :model="form" label-width="auto" :rules="rules">
       <el-form-item prop="name" label="姓名">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.name" :disabled="disabled"></el-input>
       </el-form-item>
       <el-form-item prop="job" label="工种">
-        <el-select>
+        <el-select :disabled="disabled">
           <el-option></el-option>
         </el-select>
       </el-form-item>
       <el-form-item v-if="form.projects.length !== 0" label="项目">
-        <staff-project-config v-model="form.projects" type="project"></staff-project-config>
+        <staff-project-config
+          v-model="form.projects"
+          type="project"
+          :disabled="disabled"
+        ></staff-project-config>
       </el-form-item>
-      <el-form-item label=" " style="margin: 0">
+      <el-form-item v-if="!disabled" label=" " style="margin: 0">
         <el-button @click="openSelectDialog">加入项目</el-button>
       </el-form-item>
     </el-form>
@@ -145,7 +153,18 @@ defineExpose({
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="close">取消</el-button>
-        <el-button type="primary" @click="confirm">确认</el-button>
+        <el-button
+          v-if="openType === DialogOpenType.DETAIL"
+          type="primary"
+          @click="openType = DialogOpenType.EDIT"
+          >编辑</el-button
+        >
+        <el-button
+          v-else-if="openType === DialogOpenType.EDIT || openType === DialogOpenType.ADD"
+          type="primary"
+          @click="confirm"
+          >确认</el-button
+        >
       </span>
     </template>
   </el-dialog>

@@ -55,7 +55,6 @@ function clickItem(item: Project) {
   .list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 40px;
     &-item {
       width: 350px;

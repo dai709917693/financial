@@ -1,7 +1,7 @@
 import router from '@/router'
 import axios from 'axios'
 
-let token = sessionStorage.getItem('token')
+export let token = sessionStorage.getItem('token')
 
 export function updateToken(val: string) {
   token = val

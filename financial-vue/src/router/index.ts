@@ -1,3 +1,4 @@
+import { token } from '@/api/base'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -43,4 +44,9 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach((to, from) => {
+  if (!token && to.name !== 'login') {
+    return { name: 'login' }
+  }
+})
 export default router
