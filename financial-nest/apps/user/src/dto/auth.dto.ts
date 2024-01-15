@@ -1,3 +1,4 @@
+import { LoginParams } from '@lib/common/proto';
 import { IsArray, IsOptional, IsString } from 'class-validator';
 export class CreateUserDto {
   @IsString()
@@ -11,14 +12,13 @@ export class InviteAdminDto {
   readonly username: string;
 }
 
-export class LoginDto {
+export class LoginDto implements LoginParams {
   @IsString()
-  username: string;
-
+  readonly username: string;
   @IsString()
-  password: string;
+  readonly password: string;
 
   @IsString()
   @IsOptional()
-  roleName?: string;
+  readonly roleName: string;
 }

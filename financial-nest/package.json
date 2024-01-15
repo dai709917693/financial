@@ -17,7 +17,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./apps/financial/test/jest-e2e.json"
+    "test:e2e": "jest --config ./apps/financial/test/jest-e2e.json",
+    "proto-ts": "protoc --plugin=./node_modules/ts-proto/protoc-gen-ts_proto.CMD --ts_proto_out=. ./libs/common/proto/*.proto --ts_proto_opt=outputEncodeMethods=false,outputJsonMethods=false,outputClientImpl=false"
   },
   "dependencies": {
     "@casl/ability": "^6.5.0",
@@ -66,6 +67,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
+    "ts-proto": "^1.166.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },

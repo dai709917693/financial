@@ -1,7 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { Client, ClientGrpc, Transport } from '@nestjs/microservices';
-import { join } from 'path';
-import { Observable } from 'rxjs';
+import { LoginParams } from '../proto';
+import { AuthService as RPCAuthService } from '../proto';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
@@ -9,28 +9,28 @@ export class AuthService implements OnModuleInit {
     transport: Transport.GRPC,
     options: {
       package: 'user',
-      protoPath: join(__dirname, '../user/user.proto'),
+      protoPath: 'libs/common/proto/user.proto',
     },
   })
   client: ClientGrpc;
 
-  private authService: any;
+  private authService: RPCAuthService;
 
   onModuleInit() {
     this.authService = this.client.getService<any>('AuthService');
   }
 
-  login(p: any): Observable<string> {
-    return this.authService.login(p);
+  login(p: LoginParams) {
+    return this.authService.Login(p);
   }
 
   verify(token: string) {
-    return this.authService.verify({
+    return this.authService.Verify({
       data: token,
     });
   }
 
   signup(p: any) {
-    return this.authService.signup(p);
+    return this.authService.Signup(p);
   }
 }

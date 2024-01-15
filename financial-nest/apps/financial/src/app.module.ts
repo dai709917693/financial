@@ -19,8 +19,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'path';
 import { TokenGuard } from './common/guard/token.guard';
 import { AllGlobalExceptionsFilter } from './common/filter/globalException';
-import { AuthModule } from '@common/auth/auth.module';
-import { AuthService } from '@common/auth/auth.service';
+import { AuthModule } from '@lib/common/auth/auth.module';
+import { AuthService } from '@lib/common/auth/auth.service';
 
 @Module({
   imports: [

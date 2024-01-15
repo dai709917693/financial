@@ -20,7 +20,7 @@
     "paths": {
       "@financial/*": ["apps/financial/src/*"],
       "@user/*": ["apps/user/src/*"],
-      "@common/*": ["apps/common/*"]
+      "@lib/*": ["libs/*"]
     }
   }
 }

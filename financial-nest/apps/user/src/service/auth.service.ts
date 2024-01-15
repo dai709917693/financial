@@ -10,7 +10,7 @@ import { RpcException } from '@nestjs/microservices';
 
 export interface LoginUserPayload {
   username: string;
-  sub: string;
+  id: string;
   roleName: Role;
 }
 
@@ -65,7 +65,7 @@ export class AuthService {
   async login(user: UserEntity) {
     const payload: LoginUserPayload = {
       username: user.username,
-      sub: user.id,
+      id: user.id,
       roleName: user.roles[0]?.name as Role,
     };
     return this.jwt.sign(payload);

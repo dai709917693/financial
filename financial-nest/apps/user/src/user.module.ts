@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { RoleController } from './controller/role.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ormconfig } from './orm.config';
@@ -11,6 +11,8 @@ import { AuthController } from './controller/auth.controller';
 import { AuthService } from './service/auth.service';
 import { RoleService } from './service/role.service';
 import { LocalStrategy } from './strategy/local.strategy';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { ValidationPipe } from './pipe/validate.pipe';
 
 @Module({
   imports: [
@@ -24,7 +26,19 @@ import { LocalStrategy } from './strategy/local.strategy';
       },
     }),
   ],
-  providers: [AuthService, RoleService, LocalStrategy],
+  providers: [
+    AuthService,
+    RoleService,
+    LocalStrategy,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+  ],
   controllers: [AuthController, RoleController],
 })
 export class UserModule {}
