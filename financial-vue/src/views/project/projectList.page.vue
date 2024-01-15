@@ -56,6 +56,11 @@ function remove(row: any) {
   <el-table :data="tableData" border>
     <el-table-column prop="name" label="项目名称" width="300" />
     <el-table-column prop="notes" label="备注" />
+    <el-table-column label="员工数量" width="90">
+      <template #default="{ row }">
+        {{ row.staffProjects.length }}
+      </template>
+    </el-table-column>
     <el-table-column label="操作">
       <template #default="{ row }">
         <el-button @click="openDetail(row)">详情</el-button>

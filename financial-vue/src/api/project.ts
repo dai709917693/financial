@@ -3,6 +3,7 @@ import type { CommonApiRes, CommonList, Project, StaffProject } from '#types'
 
 interface ListParams {
   name?: string
+  hasStaff?: boolean
   pageNum: number
   pageSize: number
 }

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package user;
+
+
+service AuthService {
+  rpc Login (LoginParams) returns (Token) {}
+  rpc Verify (Token) returns (User) {}
+  rpc Signup (LoginParams) returns (User) {}
+}
+message LoginParams {
+  string username = 1;
+  string password = 2;
+}
+
+message User {
+ string username = 1;
+ string sub = 2;
+ string roleName = 3;
+}
+
+message Token {
+  string data = 1;
+}

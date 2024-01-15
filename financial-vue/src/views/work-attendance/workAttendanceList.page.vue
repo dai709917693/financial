@@ -15,7 +15,11 @@ async function getList() {
     return
   }
   first.value = false
-  const res = await apiProject.list({ pageNum: pageNum.value, pageSize: pageSize.value })
+  const res = await apiProject.list({
+    pageNum: pageNum.value,
+    pageSize: pageSize.value,
+    hasStaff: true
+  })
   if (res.state && res.data?.list.length !== 0) {
     total.value = res.data?.total ?? 0
     pageNum.value++
