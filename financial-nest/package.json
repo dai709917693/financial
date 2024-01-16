@@ -18,13 +18,14 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/financial/test/jest-e2e.json",
-    "proto-ts": "protoc --plugin=./node_modules/ts-proto/protoc-gen-ts_proto.CMD --ts_proto_out=. ./libs/common/proto/*.proto --ts_proto_opt=outputEncodeMethods=false,outputJsonMethods=false,outputClientImpl=false"
+    "proto-ts": "protoc --plugin=./node_modules/ts-proto/protoc-gen-ts_proto.CMD --ts_proto_out=. ./libs/common/proto/*.proto --ts_proto_opt=outputEncodeMethods=false,outputJsonMethods=false,outputClientImpl=false,returnObservable=true,nestJs=true"
   },
   "dependencies": {
     "@casl/ability": "^6.5.0",
     "@grpc/grpc-js": "^1.9.13",
     "@grpc/proto-loader": "^0.7.10",
     "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.1.0",
     "@nestjs/microservices": "^10.0.0",

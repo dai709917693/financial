@@ -4,8 +4,8 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 export interface Response<T> {
   data: T;
 }
@@ -16,7 +16,7 @@ export class TransformInterceptor<T>
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data) => {
-        return { data, code: 200 };
+        return { ...data, code: 200 };
       }),
     );
   }

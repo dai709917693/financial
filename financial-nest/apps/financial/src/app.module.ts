@@ -7,46 +7,25 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ormconfig } from './orm.config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { TransformInterceptor } from './common/interceptor/transform.interceptor';
-import { PoliciesGuard } from './common/guard/auth.guard';
-import { CaslModule } from './casl/casl.module';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ProjectModule } from './project/project.module';
 import { StaffModule } from './staff/staff.module';
 import { CheckModule } from './check/check.module';
 import { SalaryModule } from './salary/salary.module';
-import { ClientsModule, Transport } from '@nestjs/microservices';
-import { join } from 'path';
-import { TokenGuard } from './common/guard/token.guard';
-import { AllGlobalExceptionsFilter } from './common/filter/globalException';
-import { AuthModule } from '@lib/common/auth/auth.module';
-import { AuthService } from '@lib/common/auth/auth.service';
+import { AuthService } from '@lib/user/user.service';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    CaslModule,
     ProjectModule,
     StaffModule,
     CheckModule,
     SalaryModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    {
-      provide: APP_GUARD,
-      useClass: TokenGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PoliciesGuard,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: TransformInterceptor,
-    },
+    AuthService,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
@@ -54,10 +33,6 @@ import { AuthService } from '@lib/common/auth/auth.service';
     {
       provide: APP_PIPE,
       useClass: ValidationPipe,
-    },
-    {
-      provide: APP_FILTER,
-      useClass: AllGlobalExceptionsFilter,
     },
   ],
 })

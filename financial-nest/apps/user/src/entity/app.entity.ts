@@ -4,22 +4,17 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
-  ManyToMany,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import { UserEntity } from './user.entity';
-import { AppEntity } from './app.entity';
+import { RoleEntity } from './role.entity';
 
 @Entity()
-export class RoleEntity {
+export class AppEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ length: 32, unique: true })
   name: string;
-
-  @Column({ nullable: true })
-  parentId: string;
 
   @Column({ length: 64, nullable: true })
   desc: string;
@@ -30,9 +25,6 @@ export class RoleEntity {
   @UpdateDateColumn()
   updatedAt: string;
 
-  @ManyToOne(() => AppEntity, (app) => app.roles)
-  app: AppEntity;
-
-  @ManyToMany(() => UserEntity, (user) => user.roles)
-  users: UserEntity[];
+  @OneToMany(() => RoleEntity, (role) => role.app)
+  roles: RoleEntity[];
 }

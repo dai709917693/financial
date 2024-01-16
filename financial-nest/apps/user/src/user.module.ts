@@ -6,18 +6,20 @@ import { UserEntity } from './entity/user.entity';
 import { RoleEntity } from './entity/role.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { AuthController } from './controller/auth.controller';
 import { AuthService } from './service/auth.service';
 import { RoleService } from './service/role.service';
 import { LocalStrategy } from './strategy/local.strategy';
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
-import { ValidationPipe } from './pipe/validate.pipe';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AppEntity } from './entity/app.entity';
+import { jwtConstants } from '@lib/common/constants';
+import { AppController } from './controller/app.controller';
+import { AppService } from './service/app.service';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    TypeOrmModule.forFeature([UserEntity, RoleEntity]),
+    TypeOrmModule.forFeature([UserEntity, RoleEntity, AppEntity]),
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
@@ -29,16 +31,13 @@ import { ValidationPipe } from './pipe/validate.pipe';
   providers: [
     AuthService,
     RoleService,
+    AppService,
     LocalStrategy,
     {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
     },
-    {
-      provide: APP_PIPE,
-      useClass: ValidationPipe,
-    },
   ],
-  controllers: [AuthController, RoleController],
+  controllers: [AuthController, RoleController, AppController],
 })
 export class UserModule {}

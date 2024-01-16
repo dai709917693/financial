@@ -1,12 +1,12 @@
-import { HttpCode, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entity/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../dto/auth.dto';
 import * as bcrypt from 'bcrypt';
-import { Role } from '@user/constants';
 import { RpcException } from '@nestjs/microservices';
+import { Role } from '@lib/common/constants';
+import { SignupParams } from '@lib/common/proto';
 
 export interface LoginUserPayload {
   username: string;
@@ -23,19 +23,20 @@ export class AuthService {
     private jwt: JwtService,
   ) {}
 
-  async signup(user: CreateUserDto): Promise<UserEntity> {
+  async signup(user: SignupParams) {
     const { username } = user;
     const existUser = await this.userRepository.findOne({
       where: { username },
     });
     if (existUser) {
-      throw new RpcException('用户名已存在');
+      throw new RpcException({ code: 3, message: '用户名已存在' });
     }
 
     const newUser = await this.userRepository.create({
       ...user,
     });
-    return await this.userRepository.save(newUser);
+    await this.userRepository.save(newUser);
+    return;
   }
 
   async validateUser(

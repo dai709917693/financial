@@ -6,7 +6,9 @@
     "deleteOutDir": true,
     "webpack": true,
     "tsConfigPath": "apps/financial/tsconfig.app.json",
-    "assets": ["**/*.proto"],
+    "assets": [
+      "**/*.proto"
+    ],
     "watchAssets": true
   },
   "monorepo": true,
@@ -37,6 +39,15 @@
       "sourceRoot": "libs/common/src",
       "compilerOptions": {
         "tsConfigPath": "libs/common/tsconfig.lib.json"
+      }
+    },
+    "bff": {
+      "type": "application",
+      "root": "apps/bff",
+      "entryFile": "main",
+      "sourceRoot": "apps/bff/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/bff/tsconfig.app.json"
       }
     }
   }

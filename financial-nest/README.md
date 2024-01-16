@@ -1,0 +1,17 @@
+OK(0)：请求成功。
+CANCELLED(1)：操作被取消。
+UNKNOWN(2)：未知错误。
+INVALID_ARGUMENT(3)：客户端给了无效的请求参数。
+DEADLINE_EXCEEDED(4)：请求超过了截止时间。
+NOT_FOUND(5)：请求资源未找到。
+ALREADY_EXISTS(6)：添加的内容已经存在。
+PERMISSION_DENIED(7)：请求权限不足。
+RESOURCE_EXHAUSTED(8)：资源耗尽。
+FAILED_PRECONDITION(9)：服务端上为准备好。
+ABORTED(10)：请求被中止。
+OUT_OF_RANGE(11)：请求超出范围。
+UNIMPLEMENTED(12)：未实现的操作。
+INTERNAL(13)：服务内部错误。
+UNAVAILABLE(14)：服务不可用。
+DATA_LOSS(15)：数据丢失或者损毁。
+UNAUTHENTICATED(16)：请求未认证。

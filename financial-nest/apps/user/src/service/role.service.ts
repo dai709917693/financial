@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../entity/user.entity';
 import { RoleEntity } from '../entity/role.entity';
-import { CreateRoleDto } from '../dto';
 import * as bcrypt from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
 
@@ -26,7 +25,7 @@ export class RoleService {
     return this.userRepository.save(user);
   }
 
-  async create(dto: CreateRoleDto) {
+  async create(dto) {
     const { name } = dto;
     const exist = await this.roleRepository.findOne({
       where: { name },

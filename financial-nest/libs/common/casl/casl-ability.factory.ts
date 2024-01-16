@@ -9,7 +9,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 // import { RoleEntity } from '@financial/auth/entity/role.entity';
 // import { UserEntity } from '@financial/auth/entity/user.entity';
 // import { LoginUserPayload } from '@financial/auth/service/auth.service';
-import { Action, permissions } from '@financial/common/constants';
+import { Action, permissions } from '../constants';
 
 type Subjects = InferSubjects<any> | 'all';
 

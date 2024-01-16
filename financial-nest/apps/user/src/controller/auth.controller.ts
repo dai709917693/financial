@@ -1,20 +1,22 @@
-import { Controller, Request, Post, UseGuards, Body } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { UserEntity } from '../entity/user.entity';
-import { CreateUserDto, LoginDto } from '../dto';
-import { GrpcMethod } from '@nestjs/microservices';
+import {
+  LoginParams,
+  SignupParams,
+  UserAuthServiceControllerMethods,
+} from '@lib/common/proto';
 
 @Controller()
+@UserAuthServiceControllerMethods()
 export class AuthController {
   constructor(private usersService: AuthService) {}
 
-  @GrpcMethod('AuthService')
-  async signup(user: CreateUserDto): Promise<UserEntity> {
+  async signup(user: SignupParams) {
     return this.usersService.signup(user);
   }
 
-  @GrpcMethod('AuthService')
-  async login(req: LoginDto) {
+  async login(req: LoginParams) {
     const user = await this.usersService.validateUser(
       req.username,
       req.password,
@@ -25,7 +27,6 @@ export class AuthController {
     return { data: token };
   }
 
-  @GrpcMethod('AuthService')
   async verify({ data }: any) {
     return this.usersService.verify(data);
   }

@@ -3,10 +3,10 @@ syntax = "proto3";
 package user;
 
 
-service AuthService {
+service UserAuthService {
   rpc Login (LoginParams) returns (TokenRes) {}
   rpc Verify (TokenRes) returns (UserRes) {}
-  rpc Signup (SignupParams) returns (UserRes) {}
+  rpc Signup (SignupParams) returns (Empty) {}
 }
 message SignupParams {
   string username = 1;
@@ -28,3 +28,31 @@ message UserRes {
 message TokenRes {
   string data = 1;
 }
+
+service UserAppService {
+  rpc Create (CreateAppParams) returns (Empty) {}
+  rpc Update (App) returns (Empty) {}
+  rpc List (QueryAppParams) returns (QueryAppRes) {}
+}
+
+message CreateAppParams {
+  string name = 1;
+  string desc = 2;
+}
+
+message App {
+  string id = 1;
+  string name = 2;
+  string desc = 3;
+}
+
+message QueryAppParams {
+  string name = 1;
+}
+
+message QueryAppRes {
+  repeated App data = 1;
+}
+
+
+message Empty {}

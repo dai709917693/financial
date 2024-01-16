@@ -30,3 +30,4 @@ export const permissions = {
     // cannot(Action.Create, UserEntity);
   },
 };
+export * from './rpcCode';

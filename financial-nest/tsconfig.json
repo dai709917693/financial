@@ -18,9 +18,15 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@financial/*": ["apps/financial/src/*"],
-      "@user/*": ["apps/user/src/*"],
-      "@lib/*": ["libs/*"]
+      "@financial/*": [
+        "apps/financial/src/*"
+      ],
+      "@user/*": [
+        "apps/user/src/*"
+      ],
+      "@lib/*": [
+        "libs/*"
+      ]
     }
   }
 }
